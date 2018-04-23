@@ -1,0 +1,73 @@
+logging:
+  level:
+    .: error
+    org.springframework: ERROR
+    com.xingyun: DEBUG
+spring:
+  prifiles:
+    active: "dev"
+  main:
+    banner-mode: "console"
+
+---
+# 开发环境配置 --- 用于分隔多个yaml文件
+# -Dspring.profiles.active=prod
+spring:
+  profiles: dev
+main:
+  banner-mode: "off"
+dubbo:
+  application:
+    name: xingyun-demo-app
+  registry:
+    address: zookeeper://192.168.1.123:2181
+    file: ./dubbo_demo_app.cache
+  monitor:
+    protocol: registry
+  protocol:
+    name: dubbo
+    port: ${random.int[50083,59999]} # 开发阶段dubbo采用随机端口号
+  service:
+    max:
+      thread:
+        threads:
+          size: 300
+    timeout: 60000
+    loadbalance: consistenthash
+  container: spring,jetty,log4j
+  log4j:
+    file: ./dubbo.log
+    level: WARN
+    subdirectory: 50082
+logSocketIp: 127.0.0.1
+---
+# 生产环境配置 -Dspring.profiles.active=prod
+
+spring:
+  profiles: prod
+main:
+  banner-mode: "off"
+dubbo:
+  application:
+    name: xingyun-demo-app
+  registry:
+    address: zookeeper://192.168.1.123:2181
+    file: ./dubbo_demo_app.cache
+  monitor:
+    protocol: registry
+  protocol:
+    name: dubbo
+    port: 50082
+  service:
+    max:
+      thread:
+        threads:
+          size: 300
+    timeout: 60000
+    loadbalance: consistenthash
+  container: spring,jetty,log4j
+  log4j:
+    file: ./dubbo.log
+    level: WARN
+    subdirectory: 50082
+logSocketIp: 10.30.5.180
